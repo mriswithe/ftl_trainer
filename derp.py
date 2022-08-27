@@ -1,3 +1,4 @@
+import struct
 from ctypes import wintypes
 import ctypes
 import win32ui
@@ -26,8 +27,8 @@ write_process_memory.argtypes = [
     ctypes.POINTER(ctypes.c_size_t),
 ]
 write_process_memory.restype = wintypes.BOOL
-
-ADDRESS1 = 0x17C8AB3C
+BASE_ADDRESS = 0x17DEFAF8
+ADDRESS1 = BASE_ADDRESS + 0x4D4
 ADDRESS2 = ctypes.create_string_buffer(4)
 bytes_read = ctypes.c_size_t()
 PROCESS = win32api.OpenProcess(PROCESS_ALL_ACCESS, 0, PID)
@@ -35,4 +36,5 @@ print(
     read_process_memory(PROCESS.handle, ADDRESS1, ADDRESS2, 4, ctypes.byref(bytes_read))
 )
 
-out = ADDRESS2.value
+out = ADDRESS2.raw
+print(struct.unpack("i", out)[0])
